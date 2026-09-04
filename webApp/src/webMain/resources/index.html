@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lena Wedding & Catering — Rayakan Cinta Tanpa Repot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Branded loader — elegant, warm, not stiff -->
+    <div id="lena-loader" aria-hidden="true">
+        <div class="loader-card">
+            <div class="loader-ornament">— ✦ —</div>
+            <div class="loader-logo">LENA <span>WEDDING</span></div>
+            <div class="loader-sub">& CATERING — EST. 2002</div>
+            <div class="loader-divider"><span></span></div>
+            <div class="loader-dots" aria-label="Memuat">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="loader-text">Menyiapkan momen bahagiamu...</div>
+        </div>
+    </div>
+
+    <script type="application/javascript" src="webApp.js"></script>
+    <script>
+        // Hilangkan loader setelah Compose siap — fade elegan, bukan hilang kaku
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var el = document.getElementById('lena-loader');
+                if (!el) return;
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                el.style.opacity = '0';
+                el.style.transform = 'scale(0.99)';
+                setTimeout(function() { el.remove(); }, 650);
+            }, 900);
+        });
+        // Fallback: kalau load event tidak kepanggil
+        setTimeout(function() {
+            var el = document.getElementById('lena-loader');
+            if (el && el.style.opacity !== '0') {
+                el.style.opacity = '0';
+                setTimeout(function(){ el.remove(); }, 600);
+            }
+        }, 4000);
+    </script>
+</body>
+</html>
