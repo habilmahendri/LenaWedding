@@ -26,6 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.size.Scale
+import coil3.request.crossfade
 import id.lena.wedding.utils.color.ColorAccent
 import id.lena.wedding.utils.color.ColorAccentLight
 import id.lena.wedding.utils.color.ColorBorder
@@ -56,10 +60,11 @@ fun AboutSection() {
             Spacer(Modifier.height(40.dp))
 
             if (isMobile) {
-                // Mobile: image stack then text
+                // Mobile: image stack then text — 600w + no crossfade biar enteng
+                val ctx = LocalPlatformContext.current
                 Box(modifier = Modifier.fillMaxWidth()) {
                     AsyncImage(
-                        model = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop",
+                        model = ImageRequest.Builder(ctx).data("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop").size(480).scale(Scale.FILL).crossfade(false).build(),
                         contentDescription = "Tentang kami", contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth().height(280.dp).clip(RoundedCornerShape(20.dp))
                     )
@@ -85,18 +90,19 @@ fun AboutSection() {
                     horizontalArrangement = Arrangement.spacedBy(48.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Image collage side
+                    // Image collage side — desktop 800w, tetap hemat
+                    val ctx2 = LocalPlatformContext.current
                     Box(modifier = Modifier.weight(1f).height(420.dp)) {
                         AsyncImage(
-                            model = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop",
+                            model = ImageRequest.Builder(ctx2).data("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop").size(600).scale(Scale.FILL).crossfade(false).build(),
                             contentDescription = "Tentang kami", contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxWidth(0.92f).height(380.dp).clip(RoundedCornerShape(22.dp)).align(Alignment.TopStart)
                         )
                         Box(
-                            modifier = Modifier.size(160.dp).clip(RoundedCornerShape(18.dp)).background(ColorAccentLight).border(4.dp, id.lena.wedding.utils.color.ColorCard, RoundedCornerShape(18.dp)).shadow(12.dp, RoundedCornerShape(18.dp)).align(Alignment.BottomEnd).padding(4.dp)
+                            modifier = Modifier.size(160.dp).clip(RoundedCornerShape(18.dp)).background(ColorAccentLight).border(4.dp, id.lena.wedding.utils.color.ColorCard, RoundedCornerShape(18.dp)).shadow(8.dp, RoundedCornerShape(18.dp)).align(Alignment.BottomEnd).padding(4.dp)
                         ) {
                             AsyncImage(
-                                model = "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=400&auto=format&fit=crop",
+                                model = ImageRequest.Builder(ctx2).data("https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=400&auto=format&fit=crop").size(300).scale(Scale.FILL).crossfade(false).build(),
                                 contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
                             )
                         }

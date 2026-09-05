@@ -30,6 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.size.Scale
+import coil3.request.crossfade
 import id.lena.wedding.utils.color.ColorAccent
 import id.lena.wedding.utils.color.ColorAccentLight
 import id.lena.wedding.utils.color.ColorBorder
@@ -65,12 +69,12 @@ fun OfferSection(onCateringClick: () -> Unit = {}) {
 
             if (isMobile) {
                 Column(verticalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.fillMaxWidth()) {
-                    offerCards.forEachIndexed { index, card -> OfferCardPremium(card, index, onCateringClick) }
+                    offerCards.forEachIndexed { index, card -> OfferCardPremium(card, index, onCateringClick, isMobile) }
                 }
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(22.dp), modifier = Modifier.fillMaxWidth()) {
                     offerCards.forEachIndexed { index, card ->
-                        Box(modifier = Modifier.weight(1f)) { OfferCardPremium(card, index, onCateringClick) }
+                        Box(modifier = Modifier.weight(1f)) { OfferCardPremium(card, index, onCateringClick, isMobile) }
                     }
                 }
             }
@@ -79,14 +83,18 @@ fun OfferSection(onCateringClick: () -> Unit = {}) {
 }
 
 @Composable
-private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: Int, onCateringClick: () -> Unit = {}) {
+private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: Int, onCateringClick: () -> Unit = {}, isMobile: Boolean = false) {
     val badge = listOf("POPULER", "BEST VALUE", "EKSKLUSIF")[index % 3]
+    val ctx = LocalPlatformContext.current
     Column(
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(ColorCard).border(0.6.dp, ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(22.dp)).shadow(8.dp, RoundedCornerShape(22.dp), ambientColor = ColorBorder.copy(alpha = 0.12f), spotColor = ColorBorder.copy(alpha = 0.12f))
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(ColorCard).border(0.6.dp, ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(22.dp)).shadow(if (isMobile) 4.dp else 8.dp, RoundedCornerShape(22.dp), ambientColor = ColorBorder.copy(alpha = 0.12f), spotColor = ColorBorder.copy(alpha = 0.12f))
     ) {
-        // Image with overlay & badge
+        // Image with overlay & badge — 360w di HP biar hemat
         Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-            AsyncImage(model = card.imageUrl, contentDescription = card.title, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(200.dp))
+            AsyncImage(
+                model = ImageRequest.Builder(ctx).data(if (isMobile) card.imageUrl.replace("500/500", "360/360") else card.imageUrl).size(360).scale(Scale.FILL).crossfade(false).build(),
+                contentDescription = card.title, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(200.dp)
+            )
             Box(modifier = Modifier.fillMaxWidth().height(80.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0x882D1E3A)))))
             // Top badge
             Box(
@@ -145,7 +153,7 @@ private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: 
 
 private fun openWeddingPackageWA() {
     val phone = "6281218387400"
-    val message = "Saya tertarik dengan *Paket Wedding*"
+    val message = "Saya tertarik dengan *Paket Wedding* (POPULER) — Dekorasi premium & pelaminan, Dokumentasi foto & video, WO full-day standby yang ada di section Layanan Kami."
     val enc = message.replace(" ", "%20").replace(",", "%2C").replace("&", "%26").replace("*", "%2A").replace("—", "%E2%80%94")
     window.open("https://wa.me/$phone?text=$enc", "_blank")
 }

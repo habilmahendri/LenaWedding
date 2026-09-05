@@ -29,6 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.size.Scale
+import coil3.request.crossfade
 import id.lena.wedding.utils.color.ColorAccent
 import id.lena.wedding.utils.color.ColorBorder
 import id.lena.wedding.utils.color.ColorCard
@@ -58,12 +62,12 @@ fun MenuSection() {
 
             if (isMobile) {
                 Column(verticalArrangement = Arrangement.spacedBy(18.dp), modifier = Modifier.fillMaxWidth()) {
-                    menuCards.forEachIndexed { i, menu -> MenuCardPremium(menu, i) }
+                    menuCards.forEachIndexed { i, menu -> MenuCardPremium(menu, i, isMobile) }
                 }
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.fillMaxWidth()) {
                     menuCards.forEachIndexed { i, menu ->
-                        Box(modifier = Modifier.weight(1f)) { MenuCardPremium(menu, i) }
+                        Box(modifier = Modifier.weight(1f)) { MenuCardPremium(menu, i, isMobile) }
                     }
                 }
             }
@@ -97,7 +101,7 @@ fun MenuSection() {
 }
 
 @Composable
-private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: Int) {
+private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: Int, isMobile: Boolean = false) {
     val desc = listOf(
         "100+ pax • Buffet lengkap dengan sup, nasi, lauk & dessert",
         "Live cooking • Siomay, bakso, sate & jajanan pasar favorit",
@@ -105,11 +109,15 @@ private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: In
     )[index % 3]
     val count = listOf("120+ Menu", "40+ Stall", "80+ Lauk")[index % 3]
 
+    val ctx = LocalPlatformContext.current
     Column(
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(ColorCard).border(0.6.dp, ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(20.dp)).shadow(6.dp, RoundedCornerShape(20.dp), ambientColor = ColorBorder.copy(alpha = 0.12f), spotColor = ColorBorder.copy(alpha = 0.12f))
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(ColorCard).border(0.6.dp, ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(20.dp)).shadow(if (isMobile) 3.dp else 6.dp, RoundedCornerShape(20.dp), ambientColor = ColorBorder.copy(alpha = 0.12f), spotColor = ColorBorder.copy(alpha = 0.12f))
     ) {
         Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
-            AsyncImage(model = menu.imageUrl, contentDescription = menu.title, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(180.dp))
+            AsyncImage(
+                model = ImageRequest.Builder(ctx).data(if (isMobile) menu.imageUrl.replace("500/400", "360/260") else menu.imageUrl).size(360).scale(Scale.FILL).crossfade(false).build(),
+                contentDescription = menu.title, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(180.dp)
+            )
             Box(modifier = Modifier.fillMaxWidth().height(70.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA2D1E3A)))))
             Box(
                 modifier = Modifier.align(Alignment.TopEnd).padding(10.dp).clip(RoundedCornerShape(20.dp)).background(Color.White.copy(alpha = 0.92f)).padding(horizontal = 10.dp, vertical = 5.dp)
