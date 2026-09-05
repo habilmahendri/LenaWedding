@@ -54,18 +54,27 @@ fun HeroSection(onPrimaryClick: () -> Unit = {}, onSecondaryClick: () -> Unit = 
     BoxWithConstraints(modifier = Modifier.fillMaxWidth().height(720.dp)) {
         val isMobile = maxWidth < 760.dp
 
-        // Ken Burns zoom animation
-        val infiniteTransition = rememberInfiniteTransition(label = "heroZoom")
-        val scale by infiniteTransition.animateFloat(
-            initialValue = 1f, targetValue = 1.08f,
-            animationSpec = infiniteRepeatable(tween(14000, easing = LinearEasing), RepeatMode.Reverse), label = "scale"
-        )
+        // Ken Burns cuma di desktop — di HP dimatikan biar tidak lag (hemat GPU)
         var isVisible by remember { mutableStateOf(false) }
-        val alpha by animateFloatAsState(if (isVisible) 1f else 0f, tween(1200), label = "fadeIn")
+        val alpha by animateFloatAsState(if (isVisible) 1f else 0f, tween(900), label = "fadeIn")
         LaunchedEffect(Unit) { isVisible = true }
 
+        val heroImageUrl = if (isMobile) {
+            "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop"
+        } else {
+            "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1920&auto=format&fit=crop"
+        }
+        // Desktop: Ken Burns 1f→1.08, Mobile: static 1f (no infinite transition)
+        val scale = if (isMobile) {
+            1f
+        } else {
+            val t = rememberInfiniteTransition(label = "heroZoom")
+            val s by t.animateFloat(1f, 1.08f, infiniteRepeatable(tween(14000, easing = LinearEasing), RepeatMode.Reverse), label = "scale")
+            s
+        }
+
         AsyncImage(
-            model = "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2940&auto=format&fit=crop",
+            model = heroImageUrl,
             contentDescription = "Foto pernikahan",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = scale; scaleY = scale; this.alpha = alpha }

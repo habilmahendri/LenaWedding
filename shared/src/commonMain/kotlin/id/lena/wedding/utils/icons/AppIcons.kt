@@ -289,6 +289,17 @@ fun ChevronRightIcon(tint: Color, modifier: Modifier = Modifier, size: Dp = 20.d
 }
 
 @Composable
+fun HamburgerIcon(tint: Color, modifier: Modifier = Modifier, size: Dp = 18.dp, stroke: Dp = 1.8.dp) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = size.toPx(); val h = size.toPx()
+        val strokePx = stroke.toPx()
+        drawLine(color = tint, start = Offset(w * 0.15f, h * 0.28f), end = Offset(w * 0.85f, h * 0.28f), strokeWidth = strokePx, cap = StrokeCap.Round)
+        drawLine(color = tint, start = Offset(w * 0.15f, h * 0.50f), end = Offset(w * 0.85f, h * 0.50f), strokeWidth = strokePx, cap = StrokeCap.Round)
+        drawLine(color = tint, start = Offset(w * 0.15f, h * 0.72f), end = Offset(w * 0.85f, h * 0.72f), strokeWidth = strokePx, cap = StrokeCap.Round)
+    }
+}
+
+@Composable
 fun ExpandIcon(tint: Color, modifier: Modifier = Modifier, size: Dp = 16.dp) {
     Canvas(modifier = modifier.size(size)) {
         val w = size.toPx()

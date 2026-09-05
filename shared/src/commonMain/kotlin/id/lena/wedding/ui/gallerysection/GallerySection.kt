@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import coil3.compose.AsyncImage
 import id.lena.wedding.utils.color.ColorAccent
 import id.lena.wedding.utils.color.ColorBorder
@@ -40,7 +38,6 @@ import id.lena.wedding.utils.color.ColorTextMuted
 import id.lena.wedding.utils.data.GalleryPhoto
 import id.lena.wedding.utils.data.galleryPhotos
 import id.lena.wedding.utils.icons.ArrowRightIcon
-import id.lena.wedding.utils.icons.ExpandIcon
 
 
 @Composable
@@ -71,21 +68,34 @@ fun GallerySection(onPhotoClick: (Int) -> Unit = {}) {
             }
             Spacer(Modifier.height(24.dp))
 
-            androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid(
-                columns = androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.Adaptive(minSize = if (isMobile) 150.dp else 220.dp),
-                verticalItemSpacing = if (isMobile) 10.dp else 14.dp,
-                horizontalArrangement = Arrangement.spacedBy(if (isMobile) 10.dp else 14.dp),
-                modifier = Modifier.fillMaxWidth().heightIn(max = 2000.dp),
-                userScrollEnabled = false
+            // Masonry beneran — 3 kolom desktop / 2 kolom HP, ringan (tanpa nested lazy) tapi tetap staggered rapi
+            val columns = if (isMobile) 2 else 3
+            val spacing = if (isMobile) 10.dp else 14.dp
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing),
+                verticalAlignment = Alignment.Top
             ) {
-                items(galleryPhotos.size) { idx ->
-                    val photo = galleryPhotos[idx]
-                    Box(
-                        modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile)).clip(RoundedCornerShape(16.dp)).clickable { onPhotoClick(idx) }
+                repeat(columns) { col ->
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(spacing)
                     ) {
-                        AsyncImage(model = photo.url, contentDescription = photo.caption, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile)))
-                        Box(modifier = Modifier.fillMaxWidth().height(70.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC2D1E3A)))))
-                        Text(photo.caption, color = Color.White, fontSize = 11.5.sp, fontWeight = FontWeight.Medium, modifier = Modifier.align(Alignment.BottomStart).padding(10.dp), lineHeight = 14.sp)
+                        galleryPhotos.forEachIndexed { idx, photo ->
+                            if (idx % columns == col) {
+                                val smallUrl = if (isMobile) photo.url.replace("500/500", "400/500") else photo.url
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile)).clip(RoundedCornerShape(16.dp)).clickable { onPhotoClick(idx) }
+                                ) {
+                                    AsyncImage(
+                                        model = smallUrl, contentDescription = photo.caption, contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile))
+                                    )
+                                    Box(modifier = Modifier.fillMaxWidth().height(70.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC2D1E3A)))))
+                                    Text(photo.caption, color = Color.White, fontSize = 11.5.sp, fontWeight = FontWeight.Medium, modifier = Modifier.align(Alignment.BottomStart).padding(10.dp), lineHeight = 14.sp)
+                                }
+                            }
+                        }
                     }
                 }
             }

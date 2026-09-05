@@ -35,10 +35,12 @@ import id.lena.wedding.utils.color.ColorCard
 import id.lena.wedding.utils.color.ColorPrimaryDark
 import id.lena.wedding.utils.color.ColorTextMuted
 import id.lena.wedding.utils.data.navItems
+import id.lena.wedding.utils.icons.CloseIcon
+import id.lena.wedding.utils.icons.HamburgerIcon
 
 
 @Composable
-fun NavBar(onNavClick: (String) -> Unit = {}) {
+fun NavBar(selectedIndex: Int = 0, onNavClick: (String) -> Unit = {}) {
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,14 +78,11 @@ fun NavBar(onNavClick: (String) -> Unit = {}) {
                             .background(if (menuExpanded) ColorPrimaryDark else Color(0xFFF8F3EE))
                             .border(0.7.dp, if (menuExpanded) ColorPrimaryDark else ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
                             .clickable { menuExpanded = !menuExpanded }
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            if (menuExpanded) "\u2715" else "\u2630",
-                            fontSize = 16.sp,
-                            color = if (menuExpanded) Color.White else ColorPrimaryDark
-                        )
+                        if (menuExpanded) CloseIcon(tint = Color.White, size = 16.dp, stroke = 1.8.dp)
+                        else HamburgerIcon(tint = ColorPrimaryDark, size = 18.dp, stroke = 1.7.dp)
                     }
                 } else {
                     Row(
@@ -92,15 +91,16 @@ fun NavBar(onNavClick: (String) -> Unit = {}) {
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                             navItems.forEachIndexed { index, item ->
+                                val isSelected = index == selectedIndex
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
                                         item.label,
-                                        color = if (index == 0) ColorPrimaryDark else ColorTextMuted,
+                                        color = if (isSelected) ColorPrimaryDark else ColorTextMuted,
                                         fontSize = 13.5.sp,
-                                        fontWeight = if (index == 0) FontWeight.SemiBold else FontWeight.Medium,
+                                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                                         modifier = Modifier.clickable { onNavClick(item.label) }
                                     )
-                                    if (index == 0) Box(modifier = Modifier.padding(top = 2.dp).width(18.dp).height(2.dp).clip(RoundedCornerShape(1.dp)).background(ColorAccent))
+                                    if (isSelected) Box(modifier = Modifier.padding(top = 2.dp).width(18.dp).height(2.dp).clip(RoundedCornerShape(1.dp)).background(ColorAccent))
                                 }
                             }
                         }
@@ -121,18 +121,19 @@ fun NavBar(onNavClick: (String) -> Unit = {}) {
                 Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(ColorBorder))
                 Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     navItems.forEachIndexed { index, item ->
+                        val isSelected = index == selectedIndex
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(if (index == 0) Color(0xFFF8F3EE) else Color.Transparent)
+                                .background(if (isSelected) Color(0xFFF8F3EE) else Color.Transparent)
                                 .clickable { menuExpanded = false; onNavClick(item.label) }
                                 .padding(horizontal = 12.dp, vertical = 12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(modifier = Modifier.width(3.dp).height(16.dp).clip(RoundedCornerShape(2.dp)).background(if (index == 0) ColorAccent else Color.Transparent))
+                            Box(modifier = Modifier.width(3.dp).height(16.dp).clip(RoundedCornerShape(2.dp)).background(if (isSelected) ColorAccent else Color.Transparent))
                             Spacer(Modifier.width(10.dp))
-                            Text(item.label, color = if (index == 0) ColorPrimaryDark else ColorTextMuted, fontSize = 14.sp, fontWeight = if (index == 0) FontWeight.SemiBold else FontWeight.Medium)
+                            Text(item.label, color = if (isSelected) ColorPrimaryDark else ColorTextMuted, fontSize = 14.sp, fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium)
                         }
                     }
                     Spacer(Modifier.height(8.dp))
