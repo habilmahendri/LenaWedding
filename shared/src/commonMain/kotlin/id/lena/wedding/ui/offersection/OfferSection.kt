@@ -40,6 +40,7 @@ import id.lena.wedding.utils.color.ColorBorder
 import id.lena.wedding.utils.color.ColorCard
 import id.lena.wedding.utils.color.ColorPrimaryDark
 import id.lena.wedding.utils.color.ColorTextMuted
+import id.lena.wedding.utils.color.ColorSectionAlt
 import id.lena.wedding.utils.data.offerCards
 import id.lena.wedding.utils.icons.ArrowRightIcon
 import id.lena.wedding.utils.icons.CheckIcon
@@ -47,7 +48,7 @@ import kotlinx.browser.window
 
 
 @Composable
-fun OfferSection(onCateringClick: () -> Unit = {}) {
+fun OfferSection(onCateringClick: () -> Unit = {}, onDekorasiClick: () -> Unit = {}) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth().background(ColorCard).padding(horizontal = 24.dp, vertical = 64.dp)) {
         val isMobile = maxWidth < 760.dp
 
@@ -69,12 +70,12 @@ fun OfferSection(onCateringClick: () -> Unit = {}) {
 
             if (isMobile) {
                 Column(verticalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.fillMaxWidth()) {
-                    offerCards.forEachIndexed { index, card -> OfferCardPremium(card, index, onCateringClick, isMobile) }
+                    offerCards.forEachIndexed { index, card -> OfferCardPremium(card, index, onCateringClick, onDekorasiClick, isMobile) }
                 }
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(22.dp), modifier = Modifier.fillMaxWidth()) {
                     offerCards.forEachIndexed { index, card ->
-                        Box(modifier = Modifier.weight(1f)) { OfferCardPremium(card, index, onCateringClick, isMobile) }
+                        Box(modifier = Modifier.weight(1f)) { OfferCardPremium(card, index, onCateringClick, onDekorasiClick, isMobile) }
                     }
                 }
             }
@@ -83,17 +84,18 @@ fun OfferSection(onCateringClick: () -> Unit = {}) {
 }
 
 @Composable
-private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: Int, onCateringClick: () -> Unit = {}, isMobile: Boolean = false) {
+private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: Int, onCateringClick: () -> Unit = {}, onDekorasiClick: () -> Unit = {}, isMobile: Boolean = false) {
     val badge = listOf("POPULER", "BEST VALUE", "EKSKLUSIF")[index % 3]
     val ctx = LocalPlatformContext.current
     Column(
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(ColorCard).border(0.6.dp, ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(22.dp)).shadow(if (isMobile) 4.dp else 8.dp, RoundedCornerShape(22.dp), ambientColor = ColorBorder.copy(alpha = 0.12f), spotColor = ColorBorder.copy(alpha = 0.12f))
     ) {
-        // Image with overlay & badge — 360w di HP biar hemat
+        // Image with overlay & badge — 320w di HP biar hemat
         Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
             AsyncImage(
-                model = ImageRequest.Builder(ctx).data(if (isMobile) card.imageUrl.replace("500/500", "360/360") else card.imageUrl).size(360).scale(Scale.FILL).crossfade(false).build(),
-                contentDescription = card.title, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(200.dp)
+                model = ImageRequest.Builder(ctx).data(if (isMobile) card.imageUrl.replace("500/500", "320/320") else card.imageUrl).size(320).scale(Scale.FILL).crossfade(false).build(),
+                contentDescription = card.title, contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low, placeholder = androidx.compose.ui.graphics.painter.ColorPainter(ColorSectionAlt),
+                modifier = Modifier.fillMaxWidth().height(200.dp)
             )
             Box(modifier = Modifier.fillMaxWidth().height(80.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0x882D1E3A)))))
             // Top badge
@@ -124,9 +126,10 @@ private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: 
                 }
             }
             Spacer(Modifier.height(4.dp))
-            // CTA — Wedding direct WA, Catering buka pilihan paket
+            // CTA — Wedding direct WA, Catering & Dekorasi buka popup
             val isWedding = index == 0
             val isCatering = index == 1
+            val isDekor = index == 2
             Row(
                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
                     .background(if (isWedding) ColorAccent else ColorPrimaryDark)
@@ -134,6 +137,7 @@ private fun OfferCardPremium(card: id.lena.wedding.utils.data.OfferCard, index: 
                         when {
                             isWedding -> Modifier.clickable { openWeddingPackageWA() }
                             isCatering -> Modifier.clickable { onCateringClick() }
+                            isDekor -> Modifier.clickable { onDekorasiClick() }
                             else -> Modifier
                         }
                     )

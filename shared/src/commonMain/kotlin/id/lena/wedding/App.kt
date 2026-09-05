@@ -59,10 +59,14 @@ import coil3.request.crossfade
 import id.lena.wedding.ui.aboutsection.AboutSection
 import id.lena.wedding.ui.cateringdetail.CateringDetailDialog
 import id.lena.wedding.ui.contactsection.ContactSection
+import id.lena.wedding.ui.dekorasidetail.DekorasiDetailDialog
 import id.lena.wedding.ui.footersection.FooterSection
 import id.lena.wedding.ui.gallerysection.GallerySection
 import id.lena.wedding.ui.herosection.HeroSection
 import id.lena.wedding.ui.highlightsection.HighlightSection
+import id.lena.wedding.ui.menudetail.MenuMasakanDialog
+import id.lena.wedding.ui.menudetail.MenuPondokanDialog
+import id.lena.wedding.ui.menudetail.MenuPrasmananDialog
 import id.lena.wedding.ui.menusection.MenuSection
 import id.lena.wedding.ui.navbar.NavBar
 import id.lena.wedding.ui.offersection.OfferSection
@@ -98,6 +102,10 @@ fun WeddingOrganizerApp() {
     val scope = rememberCoroutineScope()
     var galleryIndex by remember { mutableStateOf<Int?>(null) }
     var showCateringDetail by remember { mutableStateOf(false) }
+    var showDekorasiDetail by remember { mutableStateOf(false) }
+    var showPrasmananDetail by remember { mutableStateOf(false) }
+    var showPondokanDetail by remember { mutableStateOf(false) }
+    var showMasakanDetail by remember { mutableStateOf(false) }
     val currentItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
     val navSelectedIndex = when (currentItemIndex) {
         0 -> 0 // Beranda
@@ -137,20 +145,27 @@ fun WeddingOrganizerApp() {
                     scrollTo(id)
                 })
                 LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), state = lazyListState) {
-                    item { HeroSection(onPrimaryClick = { scrollTo(SectionIds.KONTAK) }, onSecondaryClick = { scrollTo(SectionIds.GALERI) }) }
-                    item { AnimatedEntrance(key = "about", delayMs = 80) { AboutSection() } }
-                    item {
+                    item(key = "hero") { HeroSection(onPrimaryClick = { scrollTo(SectionIds.KONTAK) }, onSecondaryClick = { scrollTo(SectionIds.GALERI) }) }
+                    item(key = "about") { AnimatedEntrance(key = "about", delayMs = 80) { AboutSection() } }
+                    item(key = "layanan") {
                         AnimatedEntrance(key = "layanan", delayMs = 160) {
                             Column {
-                                OfferSection(onCateringClick = { showCateringDetail = true })
-                                MenuSection()
+                                OfferSection(
+                                    onCateringClick = { showCateringDetail = true },
+                                    onDekorasiClick = { showDekorasiDetail = true }
+                                )
+                                MenuSection(
+                                    onPrasmananClick = { showPrasmananDetail = true },
+                                    onPondokanClick = { showPondokanDetail = true },
+                                    onMasakanClick = { showMasakanDetail = true }
+                                )
                                 HighlightSection()
                             }
                         }
                     }
-                    item { AnimatedEntrance(key = "galeri", delayMs = 240) { GallerySection(onPhotoClick = { galleryIndex = it }) } }
-                    item { AnimatedEntrance(key = "testimoni", delayMs = 320) { TestimonialSection() } }
-                    item {
+                    item(key = "galeri") { AnimatedEntrance(key = "galeri", delayMs = 240) { GallerySection(onPhotoClick = { galleryIndex = it }) } }
+                    item(key = "testimoni") { AnimatedEntrance(key = "testimoni", delayMs = 320) { TestimonialSection() } }
+                    item(key = "kontak") {
                         AnimatedEntrance(key = "kontak", delayMs = 380) {
                             Column {
                                 ContactSection()
@@ -192,7 +207,7 @@ fun WeddingOrganizerApp() {
                                     CloseIcon(Color.White, size = 16.dp, stroke = 1.8.dp)
                                 }
                             }
-                            // Zoomable image — full besar, bisa pinch zoom & drag — tap tidak tutup
+                            // Image full tanpa scale awal — Fit, tidak ke-zoom, tetap center di HP
                             Box(
                                 modifier = Modifier.fillMaxWidth().weight(1f).widthIn(max = 1100.dp).clip(RoundedCornerShape(16.dp)).background(Color.Black.copy(alpha = 0.35f)).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }, onClick = {}),
                                 contentAlignment = Alignment.Center
@@ -200,7 +215,7 @@ fun WeddingOrganizerApp() {
                                 ZoomableImage(
                                     model = photo.url,
                                     contentDescription = photo.caption,
-                                    modifier = Modifier.fillMaxSize()
+                                    modifier = Modifier.fillMaxWidth().wrapContentHeight()
                                 )
                                 // Prev — fixed, tidak ikut zoom
                                 Box(
@@ -262,6 +277,126 @@ fun WeddingOrganizerApp() {
                     }
                 }
             }
+            // Dekorasi paket detail — popup serupa
+            AnimatedVisibility(
+                visible = showDekorasiDetail,
+                enter = fadeIn(tween(260)),
+                exit = fadeOut(tween(200)),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.72f)).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { showDekorasiDetail = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).padding(bottom = 8.dp), horizontalArrangement = Arrangement.End) {
+                            Box(
+                                modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.14f)).border(1.dp, Color.White.copy(alpha = 0.20f), CircleShape).clickable { showDekorasiDetail = false },
+                                contentAlignment = Alignment.Center
+                            ) { CloseIcon(Color.White, size = 16.dp, stroke = 1.8.dp) }
+                        }
+                        Box(
+                            modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).heightIn(max = 720.dp).clip(RoundedCornerShape(22.dp)).background(Color.Transparent).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }, onClick = {})
+                        ) {
+                            DekorasiDetailDialog(onDismiss = { showDekorasiDetail = false })
+                        }
+                    }
+                }
+            }
+            // Prasmanan menu detail — popup kategori
+            AnimatedVisibility(
+                visible = showPrasmananDetail,
+                enter = fadeIn(tween(260)),
+                exit = fadeOut(tween(200)),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.72f)).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { showPrasmananDetail = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).padding(bottom = 8.dp), horizontalArrangement = Arrangement.End) {
+                            Box(
+                                modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.14f)).border(1.dp, Color.White.copy(alpha = 0.20f), CircleShape).clickable { showPrasmananDetail = false },
+                                contentAlignment = Alignment.Center
+                            ) { CloseIcon(Color.White, size = 16.dp, stroke = 1.8.dp) }
+                        }
+                        Box(
+                            modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).heightIn(max = 720.dp).clip(RoundedCornerShape(22.dp)).background(Color.Transparent).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }, onClick = {})
+                        ) {
+                            MenuPrasmananDialog(onDismiss = { showPrasmananDetail = false })
+                        }
+                    }
+                }
+            }
+            // Pondokan detail
+            AnimatedVisibility(
+                visible = showPondokanDetail,
+                enter = fadeIn(tween(260)),
+                exit = fadeOut(tween(200)),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.72f)).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { showPondokanDetail = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).padding(bottom = 8.dp), horizontalArrangement = Arrangement.End) {
+                            Box(
+                                modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.14f)).border(1.dp, Color.White.copy(alpha = 0.20f), CircleShape).clickable { showPondokanDetail = false },
+                                contentAlignment = Alignment.Center
+                            ) { CloseIcon(Color.White, size = 16.dp, stroke = 1.8.dp) }
+                        }
+                        Box(
+                            modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).heightIn(max = 720.dp).clip(RoundedCornerShape(22.dp)).background(Color.Transparent).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }, onClick = {})
+                        ) {
+                            MenuPondokanDialog(onDismiss = { showPondokanDetail = false })
+                        }
+                    }
+                }
+            }
+            // Masakan detail
+            AnimatedVisibility(
+                visible = showMasakanDetail,
+                enter = fadeIn(tween(260)),
+                exit = fadeOut(tween(200)),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.72f)).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { showMasakanDetail = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).padding(bottom = 8.dp), horizontalArrangement = Arrangement.End) {
+                            Box(
+                                modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.14f)).border(1.dp, Color.White.copy(alpha = 0.20f), CircleShape).clickable { showMasakanDetail = false },
+                                contentAlignment = Alignment.Center
+                            ) { CloseIcon(Color.White, size = 16.dp, stroke = 1.8.dp) }
+                        }
+                        Box(
+                            modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).heightIn(max = 720.dp).clip(RoundedCornerShape(22.dp)).background(Color.Transparent).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }, onClick = {})
+                        ) {
+                            MenuMasakanDialog(onDismiss = { showMasakanDetail = false })
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -308,7 +443,7 @@ private fun ZoomableImage(model: String, contentDescription: String?, modifier: 
     ) {
         AsyncImage(
             model = model, contentDescription = contentDescription, contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth().wrapContentHeight()
         )
     }
 }

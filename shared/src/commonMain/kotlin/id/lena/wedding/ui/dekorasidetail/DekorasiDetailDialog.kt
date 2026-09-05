@@ -1,4 +1,4 @@
-package id.lena.wedding.ui.cateringdetail
+package id.lena.wedding.ui.dekorasidetail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -49,107 +49,104 @@ import id.lena.wedding.utils.icons.CheckIcon
 import id.lena.wedding.utils.icons.StarIcon
 import kotlinx.browser.window
 
-private data class CateringPaket(
+private data class DekorPaket(
     val name: String,
     val subtitle: String,
     val price: String,
-    val perPax: String,
+    val perEvent: String,
     val image: String,
     val badge: String,
-    val menus: List<String>,
+    val features: List<String>,
     val highlight: Boolean = false,
     val note: String
 )
 
-private val paketList = listOf(
-    CateringPaket(
-        name = "Hemat",
-        subtitle = "Intimate 100–250 tamu • Prasmanan",
-        price = "Rp 45.000",
-        perPax = "/pax",
-        image = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
-        badge = "HEMAT",
-        menus = listOf("Nasi Putih + Nasi Goreng", "Ayam Bakar / Goreng", "Rendang / Empal Daging", "Capcay / Sop Sayur", "Kerupuk + Sambal", "Buah + Air Mineral"),
-        note = "Paling ekonomis, rasa tetap premium"
+private val dekorList = listOf(
+    DekorPaket(
+        name = "Akad Intimate",
+        subtitle = "Akad & lamaran 50–150 tamu",
+        price = "Mulai Rp 8jt",
+        perEvent = "/event",
+        image = "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop",
+        badge = "INTIMATE",
+        features = listOf("Backdrop akad 3x4m", "Kursi pelaminan 2 + 4", "Bunga fresh mix", "Lighting warm + karpet", "Hand bouquet", "Crew dekor H-1"),
+        note = "Khidmat & foto-friendly untuk akad"
     ),
-    CateringPaket(
-        name = "Premium",
-        subtitle = "Best seller 300–600 tamu • Lengkap",
-        price = "Rp 65.000",
-        perPax = "/pax",
-        image = "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop",
+    DekorPaket(
+        name = "Resepsi Elegan",
+        subtitle = "Best seller 300–800 tamu",
+        price = "Mulai Rp 18jt",
+        perEvent = "/event",
+        image = "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=800&auto=format&fit=crop",
         badge = "BEST SELLER",
-        menus = listOf("Nasi Putih + Nasi Kebuli", "Ayam Bakar Madu", "Gurame Asam Manis", "Sop Buntut", "Pudding + Buah", "Soft Drink"),
+        features = listOf("Pelaminan 8–12m + backdrop", "Bunga fresh premium", "Lighting & LED backdrop", "Meja akad + dekor aisle", "Standing flower + gate", "Crew full day + bongkar"),
         highlight = true,
-        note = "Paling diminati — porsi & rasa paling lengkap"
+        note = "Paling diminati — mewah tapi tetap elegan"
     ),
-    CateringPaket(
-        name = "Pondokan",
-        subtitle = "Live cooking 200–400 tamu • Stall",
-        price = "Rp 55.000",
-        perPax = "/pax",
-        image = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop",
-        badge = "LIVE COOKING",
-        menus = listOf("Siomay Bandung", "Bakso Malang", "Sate Ayam / Kambing", "Pempek Palembang", "Es Dawet / Es Teh", "Pramusaji + Dekor Stall"),
-        note = "Interaktif, tamu suka antri — paling meriah"
+    DekorPaket(
+        name = "Full Custom",
+        subtitle = "Grand 500–1500 tamu • Tema bebas",
+        price = "Mulai Rp 30jt",
+        perEvent = "/event",
+        image = "https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=800&auto=format&fit=crop",
+        badge = "EKSKLUSIF",
+        features = listOf("Konsep custom sesuai tema", "Pelaminan + backdrop + aisle full", "Bunga fresh import mix", "Lighting pro + fog effect", "Photo corner + gate", "Survey & 3D design gratis"),
+        note = "Eksklusif, dirancang khusus untukmu"
     )
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CateringDetailDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+fun DekorasiDetailDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth().widthIn(max = 980.dp).clip(RoundedCornerShape(24.dp)).background(ColorCard).verticalScroll(rememberScrollState())) {
         val isMobile = maxWidth < 680.dp
 
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Elegant header — no big image, just warm accent
+            // Header
             Box(modifier = Modifier.fillMaxWidth().background(ColorSectionAlt).padding(horizontal = 22.dp, vertical = 20.dp)) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Box(modifier = Modifier.width(20.dp).height(1.2.dp).background(ColorAccent))
-                        Text("PAKET CATERING", color = ColorAccent, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.2.sp)
+                        Text("PAKET DEKORASI", color = ColorAccent, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.2.sp)
                         Box(modifier = Modifier.width(20.dp).height(1.2.dp).background(ColorAccent))
                     }
                     Spacer(Modifier.height(10.dp))
-                    Text("Pilih Paket Sesuai Tamu & Budget", color = ColorPrimaryDark, fontSize = if (isMobile) 20.sp else 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
+                    Text("Dekorasi yang Bercerita", color = ColorPrimaryDark, fontSize = if (isMobile) 20.sp else 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(6.dp))
-                    Text("Prasmanan & pondokan live cooking — bisa mix custom, sudah termasuk pramusaji & alat saji", color = ColorTextMuted, fontSize = 12.5.sp, textAlign = TextAlign.Center, lineHeight = 18.sp, modifier = Modifier.widthIn(max = 520.dp))
+                    Text("Bunga fresh, lighting warm & backdrop yang foto-friendly — adat hingga modern", color = ColorTextMuted, fontSize = 12.5.sp, textAlign = TextAlign.Center, lineHeight = 18.sp, modifier = Modifier.widthIn(max = 520.dp))
                     Spacer(Modifier.height(14.dp))
-                    @OptIn(ExperimentalLayoutApi::class)
                     FlowRow(
                         modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(ColorCard).border(0.6.dp, ColorBorder.copy(alpha = 0.5f), RoundedCornerShape(20.dp)).padding(horizontal = 12.dp, vertical = 7.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        TrustInline("500+ Tamu/Hari", ColorAccent)
+                        TrustInline("Bunga Fresh", ColorAccent)
                         Box(modifier = Modifier.width(1.dp).height(14.dp).background(ColorBorder.copy(alpha = 0.4f)))
-                        TrustInline("Higienis Chef", ColorAccent)
-                        // Di HP, Gratis Test Food akan wrap ke baris baru dengan rapi, tidak kepotong
+                        TrustInline("Lighting Pro", ColorAccent)
                         Box(modifier = Modifier.width(1.dp).height(14.dp).background(ColorBorder.copy(alpha = 0.4f)))
-                        TrustInline("Gratis Test Food", ColorAccent)
+                        TrustInline("Custom Tema", ColorAccent)
                     }
                 }
             }
 
-            // Paket cards — premium, airy
             Column(modifier = Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                paketList.forEach { paket ->
-                    PaketCardPremium(paket, isMobile, onPilih = {
-                        val msg = "Saya tertarik dengan *Paket Catering ${paket.name}* — ${paket.subtitle} (${paket.price}${paket.perPax}) yang ada di section Layanan Kami. Mohon info detail menu & ketersediaan untuk [isi tanggal] di Bekasi/Jabodetabek."
+                dekorList.forEach { paket ->
+                    DekorCard(paket, isMobile, onPilih = {
+                        val msg = "Saya tertarik dengan *Paket Dekorasi ${paket.name}* — ${paket.subtitle} (${paket.price}${paket.perEvent}) yang ada di section Layanan Kami. Mohon info detail & ketersediaan untuk [isi tanggal] di Bekasi/Jabodetabek."
                         val enc = msg.replace(" ", "%20").replace("\n", "%0A").replace(",", "%2C").replace("&", "%26").replace("*", "%2A")
                         window.open("https://wa.me/6281218387400?text=$enc", "_blank")
                     })
                 }
 
-                // Bottom note — elegant, not boxy
                 Column(
                     modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(ColorSectionAlt.copy(alpha = 0.7f)).border(0.6.dp, ColorBorder.copy(alpha = 0.35f), RoundedCornerShape(14.dp)).padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Bisa mix & custom menu", color = ColorPrimaryDark, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    Text("Semua paket sudah termasuk pramusaji, alat saji, dan dekor pondokan. Mau tambah stall, dessert, atau menu internasional? Konsultasi gratis — kami sesuaikan dengan jumlah tamu & budget tanpa hard selling.", color = ColorTextMuted, fontSize = 12.sp, lineHeight = 18.sp)
+                    Text("Bisa request tema & bunga", color = ColorPrimaryDark, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text("Mau adat Jawa/Sunda/Padang, rustic, modern minimalis, atau glam? Tim dekor survei lokasi & bikin 3D design gratis — bunga mix fresh & lighting disesuaikan venue.", color = ColorTextMuted, fontSize = 12.sp, lineHeight = 18.sp)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(ColorAccent))
-                        Text("Konsultasi gratis • Survey lokasi Jabodetabek", color = ColorPrimaryDark, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        Text("Free survey & 3D design • Bongkar pasang crew", color = ColorPrimaryDark, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -166,13 +163,12 @@ fun CateringDetailDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PaketCardPremium(paket: CateringPaket, isMobile: Boolean, onPilih: () -> Unit) {
+private fun DekorCard(paket: DekorPaket, isMobile: Boolean, onPilih: () -> Unit) {
     val cardModifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(ColorCard)
         .border(0.6.dp, if (paket.highlight) ColorAccent.copy(alpha = 0.5f) else ColorBorder.copy(alpha = 0.45f), RoundedCornerShape(20.dp))
         .shadow(if (paket.highlight) 10.dp else 5.dp, RoundedCornerShape(20.dp), ambientColor = ColorBorder.copy(alpha = 0.10f), spotColor = ColorBorder.copy(alpha = 0.10f))
 
     if (isMobile) {
-        // Mobile: vertical
         Column(modifier = cardModifier) {
             Box(modifier = Modifier.fillMaxWidth().height(160.dp)) {
                 AsyncImage(model = paket.image, contentDescription = paket.name, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(160.dp))
@@ -190,12 +186,11 @@ private fun PaketCardPremium(paket: CateringPaket, isMobile: Boolean, onPilih: (
                     Text(paket.subtitle, color = Color.White.copy(alpha = 0.88f), fontSize = 11.sp)
                 }
             }
-            PaketCardContent(paket, onPilih)
+            DekorCardContent(paket, onPilih)
         }
     } else {
-        // Desktop: horizontal — image left, content right — button pin di paling bawah card
-        Row(modifier = cardModifier.height(260.dp)) {
-            Box(modifier = Modifier.width(380.dp).fillMaxHeight().height(260.dp)) {
+        Row(modifier = cardModifier.heightIn(min = 240.dp)) {
+            Box(modifier = Modifier.width(380.dp).fillMaxHeight().heightIn(min = 240.dp)) {
                 AsyncImage(model = paket.image, contentDescription = paket.name, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 Box(modifier = Modifier.align(Alignment.TopStart).padding(10.dp).clip(RoundedCornerShape(8.dp)).background(if (paket.highlight) ColorAccent else ColorPrimaryDark.copy(alpha = 0.92f)).padding(horizontal = 8.dp, vertical = 4.dp)) {
                     Text(paket.badge, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold)
@@ -207,14 +202,14 @@ private fun PaketCardPremium(paket: CateringPaket, isMobile: Boolean, onPilih: (
                 }
             }
             Column(modifier = Modifier.weight(1f).fillMaxHeight().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                PaketCardContent(paket, onPilih, modifier = Modifier.fillMaxHeight())
+                DekorCardContent(paket, onPilih, modifier = Modifier.fillMaxHeight())
             }
         }
     }
 }
 
 @Composable
-private fun PaketCardContent(paket: CateringPaket, onPilih: () -> Unit, modifier: Modifier = Modifier) {
+private fun DekorCardContent(paket: DekorPaket, onPilih: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(14.dp).fillMaxWidth().fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
             Column(modifier = Modifier.weight(1f)) {
@@ -223,18 +218,17 @@ private fun PaketCardContent(paket: CateringPaket, onPilih: () -> Unit, modifier
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(paket.price, color = ColorAccent, fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
-                Text(paket.perPax, color = ColorTextMuted, fontSize = 11.sp)
+                Text(paket.perEvent, color = ColorTextMuted, fontSize = 11.sp)
             }
         }
         Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(ColorBorder.copy(alpha = 0.35f)))
-        // Menu 2 kolom biar tidak panjang
-        val half = (paket.menus.size + 1) / 2
+        val half = (paket.features.size + 1) / 2
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                paket.menus.take(half).forEach { m -> MenuRow(m) }
+                paket.features.take(half).forEach { m -> MenuRow(m) }
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                paket.menus.drop(half).forEach { m -> MenuRow(m) }
+                paket.features.drop(half).forEach { m -> MenuRow(m) }
             }
         }
         Spacer(modifier = Modifier.weight(1f))

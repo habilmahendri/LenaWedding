@@ -44,7 +44,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.size.Scale
+import coil3.request.crossfade
 import id.lena.wedding.utils.color.ColorAccent
+import id.lena.wedding.utils.color.ColorSectionAlt
 import id.lena.wedding.utils.icons.PlayIcon
 import id.lena.wedding.utils.icons.StarIcon
 
@@ -60,7 +64,7 @@ fun HeroSection(onPrimaryClick: () -> Unit = {}, onSecondaryClick: () -> Unit = 
         LaunchedEffect(Unit) { isVisible = true }
 
         val heroImageUrl = if (isMobile) {
-            "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop"
         } else {
             "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1920&auto=format&fit=crop"
         }
@@ -73,10 +77,12 @@ fun HeroSection(onPrimaryClick: () -> Unit = {}, onSecondaryClick: () -> Unit = 
             s
         }
 
+        val ctx = coil3.compose.LocalPlatformContext.current
         AsyncImage(
-            model = heroImageUrl,
+            model = coil3.request.ImageRequest.Builder(ctx).data(heroImageUrl).size(if (isMobile) 600 else 1200).scale(coil3.size.Scale.FILL).crossfade(false).build(),
             contentDescription = "Foto pernikahan",
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low,
+            placeholder = androidx.compose.ui.graphics.painter.ColorPainter(id.lena.wedding.utils.color.ColorSectionAlt),
             modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = scale; scaleY = scale; this.alpha = alpha }
         )
         // Layered gradient — warm, romantic, readable
