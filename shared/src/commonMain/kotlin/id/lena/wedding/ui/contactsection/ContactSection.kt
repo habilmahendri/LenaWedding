@@ -130,7 +130,7 @@ private fun ContactForm(
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.weight(1f)) { TanggalPickerField("Tanggal Acara", tanggal, onTanggal) }
-            Box(modifier = Modifier.weight(1f)) { Field("Paket", "Wedding / Catering / Custom", paket, onPaket) }
+            Box(modifier = Modifier.weight(1f)) { Field("Paket", "Wedding / Catering", paket, onPaket) }
         }
         FieldMulti("Pesan / Kebutuhan", "Ceritakan konsep, jumlah tamu, lokasi, budget...", pesan, onPesan)
 

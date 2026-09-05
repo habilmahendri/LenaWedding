@@ -69,14 +69,28 @@ fun MenuSection() {
             }
 
             Spacer(Modifier.height(28.dp))
-            // Bottom note
-            Row(
-                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(ColorCard).border(0.7.dp, ColorBorder.copy(alpha = 0.6f), RoundedCornerShape(14.dp)).padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(Color(0xFF4CAF50)))
-                Text("Bisa request menu custom & test food gratis", color = ColorPrimaryDark, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
-                Text("•  Hubungi kami", color = ColorAccent, fontSize = 12.5.sp, fontWeight = FontWeight.Bold)
+            // Bottom note — responsive: di HP jadi wrap/column biar tidak kepotong
+            if (isMobile) {
+                Column(
+                    modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(ColorCard).border(0.7.dp, ColorBorder.copy(alpha = 0.6f), RoundedCornerShape(14.dp)).padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(Color(0xFF4CAF50)))
+                        Text("Bisa request menu custom & test food gratis", color = ColorPrimaryDark, fontSize = 12.5.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+                    }
+                    Text("•  Hubungi kami", color = ColorAccent, fontSize = 12.5.sp, fontWeight = FontWeight.Bold)
+                }
+            } else {
+                Row(
+                    modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(ColorCard).border(0.7.dp, ColorBorder.copy(alpha = 0.6f), RoundedCornerShape(14.dp)).padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(Color(0xFF4CAF50)))
+                    Text("Bisa request menu custom & test food gratis", color = ColorPrimaryDark, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
+                    Text("•  Hubungi kami", color = ColorAccent, fontSize = 12.5.sp, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }

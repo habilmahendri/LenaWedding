@@ -24,13 +24,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -93,29 +94,38 @@ fun WeddingOrganizerApp() {
             .build()
     }
 
-    val scrollState = rememberScrollState()
+    val lazyListState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    val offsets = remember { mutableStateMapOf<String, Int>() }
     var galleryIndex by remember { mutableStateOf<Int?>(null) }
     var showCateringDetail by remember { mutableStateOf(false) }
+    val currentItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
+    val navSelectedIndex = when (currentItemIndex) {
+        0 -> 0 // Beranda
+        1 -> 1 // Tentang Kami
+        2 -> 2 // Layanan
+        3, 4 -> 3 // Galeri + Testimoni tetap highlight Galeri
+        5 -> 4 // Kontak Kami
+        else -> 0
+    }
 
+    // Index mapping untuk LazyColumn: 0=Beranda,1=Tentang,2=Layanan,3=Galeri,4=Testimoni,5=Kontak
     fun scrollTo(id: String) {
-        val target = offsets[id] ?: when (id) {
+        val index = when (id) {
             SectionIds.BERANDA -> 0
-            SectionIds.TENTANG -> 700
-            SectionIds.LAYANAN -> 1200
-            SectionIds.GALERI -> 2800
-            SectionIds.KONTAK -> 3600
+            SectionIds.TENTANG -> 1
+            SectionIds.LAYANAN -> 2
+            SectionIds.GALERI -> 3
+            SectionIds.KONTAK -> 5
             else -> 0
         }
-        scope.launch { scrollState.animateScrollTo(target, tween(750)) }
+        scope.launch { lazyListState.animateScrollToItem(index) }
     }
 
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize().background(ColorBackground)) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Sticky navbar — di luar scroll
-                NavBar(onNavClick = { label ->
+                // Sticky navbar — di luar scroll + auto selected
+                NavBar(selectedIndex = navSelectedIndex, onNavClick = { label ->
                     val id = when (label) {
                         "Beranda" -> SectionIds.BERANDA
                         "Tentang Kami" -> SectionIds.TENTANG
@@ -126,15 +136,11 @@ fun WeddingOrganizerApp() {
                     }
                     scrollTo(id)
                 })
-                Column(modifier = Modifier.fillMaxSize().verticalScroll(scrollState)) {
-                    Box(modifier = Modifier.onGloballyPositioned { offsets[SectionIds.BERANDA] = it.positionInParent().y.roundToInt() }) {
-                        HeroSection(onPrimaryClick = { scrollTo(SectionIds.KONTAK) }, onSecondaryClick = { scrollTo(SectionIds.GALERI) })
-                    }
-                    Box(modifier = Modifier.onGloballyPositioned { offsets[SectionIds.TENTANG] = it.positionInParent().y.roundToInt() }) {
-                        AnimatedEntrance(delayMs = 80) { AboutSection() }
-                    }
-                    Box(modifier = Modifier.onGloballyPositioned { offsets[SectionIds.LAYANAN] = it.positionInParent().y.roundToInt() }) {
-                        AnimatedEntrance(delayMs = 160) {
+                LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), state = lazyListState) {
+                    item { HeroSection(onPrimaryClick = { scrollTo(SectionIds.KONTAK) }, onSecondaryClick = { scrollTo(SectionIds.GALERI) }) }
+                    item { AnimatedEntrance(key = "about", delayMs = 80) { AboutSection() } }
+                    item {
+                        AnimatedEntrance(key = "layanan", delayMs = 160) {
                             Column {
                                 OfferSection(onCateringClick = { showCateringDetail = true })
                                 MenuSection()
@@ -142,14 +148,10 @@ fun WeddingOrganizerApp() {
                             }
                         }
                     }
-                    Box(modifier = Modifier.onGloballyPositioned { offsets[SectionIds.GALERI] = it.positionInParent().y.roundToInt() }) {
-                        AnimatedEntrance(delayMs = 240) { GallerySection(onPhotoClick = { galleryIndex = it }) }
-                    }
-                    AnimatedEntrance(delayMs = 320) {
-                        TestimonialSection()
-                    }
-                    Box(modifier = Modifier.onGloballyPositioned { offsets[SectionIds.KONTAK] = it.positionInParent().y.roundToInt() }) {
-                        AnimatedEntrance(delayMs = 380) {
+                    item { AnimatedEntrance(key = "galeri", delayMs = 240) { GallerySection(onPhotoClick = { galleryIndex = it }) } }
+                    item { AnimatedEntrance(key = "testimoni", delayMs = 320) { TestimonialSection() } }
+                    item {
+                        AnimatedEntrance(key = "kontak", delayMs = 380) {
                             Column {
                                 ContactSection()
                                 FooterSection()
