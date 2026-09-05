@@ -30,6 +30,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.size.Scale
+import coil3.request.crossfade
 import id.lena.wedding.utils.color.ColorAccent
 import id.lena.wedding.utils.color.ColorBorder
 import id.lena.wedding.utils.color.ColorCard
@@ -83,12 +87,14 @@ fun GallerySection(onPhotoClick: (Int) -> Unit = {}) {
                     ) {
                         galleryPhotos.forEachIndexed { idx, photo ->
                             if (idx % columns == col) {
-                                val smallUrl = if (isMobile) photo.url.replace("500/500", "400/500") else photo.url
+                                val smallUrl = if (isMobile) photo.url.replace("500/500", "360/360") else photo.url
+                                val ctx = LocalPlatformContext.current
                                 Box(
                                     modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile)).clip(RoundedCornerShape(16.dp)).clickable { onPhotoClick(idx) }
                                 ) {
                                     AsyncImage(
-                                        model = smallUrl, contentDescription = photo.caption, contentScale = ContentScale.Crop,
+                                        model = ImageRequest.Builder(ctx).data(smallUrl).size(360).scale(Scale.FILL).crossfade(false).build(),
+                                        contentDescription = photo.caption, contentScale = ContentScale.Crop,
                                         modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile))
                                     )
                                     Box(modifier = Modifier.fillMaxWidth().height(70.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC2D1E3A)))))
