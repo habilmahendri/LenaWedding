@@ -35,6 +35,7 @@ import id.lena.wedding.utils.color.ColorAccentLight
 import id.lena.wedding.utils.color.ColorBorder
 import id.lena.wedding.utils.color.ColorPrimaryDark
 import id.lena.wedding.utils.color.ColorTextMuted
+import id.lena.wedding.utils.color.ColorSectionAlt
 import id.lena.wedding.utils.icons.CheckIcon
 
 @Composable
@@ -65,7 +66,7 @@ fun AboutSection() {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     AsyncImage(
                         model = ImageRequest.Builder(ctx).data("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop").size(480).scale(Scale.FILL).crossfade(false).build(),
-                        contentDescription = "Tentang kami", contentScale = ContentScale.Crop,
+                        contentDescription = "Tentang kami", contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low, placeholder = androidx.compose.ui.graphics.painter.ColorPainter(ColorSectionAlt),
                         modifier = Modifier.fillMaxWidth().height(280.dp).clip(RoundedCornerShape(20.dp))
                     )
                     Box(
@@ -95,7 +96,7 @@ fun AboutSection() {
                     Box(modifier = Modifier.weight(1f).height(420.dp)) {
                         AsyncImage(
                             model = ImageRequest.Builder(ctx2).data("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop").size(600).scale(Scale.FILL).crossfade(false).build(),
-                            contentDescription = "Tentang kami", contentScale = ContentScale.Crop,
+                            contentDescription = "Tentang kami", contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low, placeholder = androidx.compose.ui.graphics.painter.ColorPainter(ColorSectionAlt),
                             modifier = Modifier.fillMaxWidth(0.92f).height(380.dp).clip(RoundedCornerShape(22.dp)).align(Alignment.TopStart)
                         )
                         Box(
@@ -103,7 +104,8 @@ fun AboutSection() {
                         ) {
                             AsyncImage(
                                 model = ImageRequest.Builder(ctx2).data("https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=400&auto=format&fit=crop").size(300).scale(Scale.FILL).crossfade(false).build(),
-                                contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                                contentDescription = null, contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low, placeholder = androidx.compose.ui.graphics.painter.ColorPainter(ColorSectionAlt),
+                                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
                             )
                         }
                         // Experience badge floating top-right

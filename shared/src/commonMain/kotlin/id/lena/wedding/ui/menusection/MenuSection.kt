@@ -2,6 +2,7 @@ package id.lena.wedding.ui.menusection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -44,7 +45,7 @@ import id.lena.wedding.utils.icons.ArrowRightIcon
 
 
 @Composable
-fun MenuSection() {
+fun MenuSection(onPrasmananClick: () -> Unit = {}, onPondokanClick: () -> Unit = {}, onMasakanClick: () -> Unit = {}) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth().background(ColorSectionAlt).padding(horizontal = 24.dp, vertical = 64.dp)) {
         val isMobile = maxWidth < 760.dp
 
@@ -62,12 +63,12 @@ fun MenuSection() {
 
             if (isMobile) {
                 Column(verticalArrangement = Arrangement.spacedBy(18.dp), modifier = Modifier.fillMaxWidth()) {
-                    menuCards.forEachIndexed { i, menu -> MenuCardPremium(menu, i, isMobile) }
+                    menuCards.forEachIndexed { i, menu -> MenuCardPremium(menu, i, isMobile, onPrasmananClick, onPondokanClick, onMasakanClick) }
                 }
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.fillMaxWidth()) {
                     menuCards.forEachIndexed { i, menu ->
-                        Box(modifier = Modifier.weight(1f)) { MenuCardPremium(menu, i, isMobile) }
+                        Box(modifier = Modifier.weight(1f)) { MenuCardPremium(menu, i, isMobile, onPrasmananClick, onPondokanClick, onMasakanClick) }
                     }
                 }
             }
@@ -101,7 +102,7 @@ fun MenuSection() {
 }
 
 @Composable
-private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: Int, isMobile: Boolean = false) {
+private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: Int, isMobile: Boolean = false, onPrasmananClick: () -> Unit = {}, onPondokanClick: () -> Unit = {}, onMasakanClick: () -> Unit = {}) {
     val desc = listOf(
         "100+ pax • Buffet lengkap dengan sup, nasi, lauk & dessert",
         "Live cooking • Siomay, bakso, sate & jajanan pasar favorit",
@@ -115,8 +116,9 @@ private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: In
     ) {
         Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
             AsyncImage(
-                model = ImageRequest.Builder(ctx).data(if (isMobile) menu.imageUrl.replace("500/400", "360/260") else menu.imageUrl).size(360).scale(Scale.FILL).crossfade(false).build(),
-                contentDescription = menu.title, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth().height(180.dp)
+                model = ImageRequest.Builder(ctx).data(if (isMobile) menu.imageUrl.replace("500/400", "320/240") else menu.imageUrl).size(320).scale(Scale.FILL).crossfade(false).build(),
+                contentDescription = menu.title, contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low, placeholder = androidx.compose.ui.graphics.painter.ColorPainter(ColorSectionAlt),
+                modifier = Modifier.fillMaxWidth().height(180.dp)
             )
             Box(modifier = Modifier.fillMaxWidth().height(70.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA2D1E3A)))))
             Box(
@@ -129,7 +131,16 @@ private fun MenuCardPremium(menu: id.lena.wedding.utils.data.MenuCard, index: In
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(desc, fontSize = 12.5.sp, color = ColorTextMuted, lineHeight = 18.sp)
             Spacer(Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.clickable {
+                    when (index) {
+                        0 -> onPrasmananClick()
+                        1 -> onPondokanClick()
+                        2 -> onMasakanClick()
+                    }
+                }
+            ) {
                 Text("Lihat menu lengkap", color = ColorAccent, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                 ArrowRightIcon(ColorAccent, size = 12.dp, stroke = 1.5.dp)
             }

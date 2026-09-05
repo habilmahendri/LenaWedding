@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,21 +33,25 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import coil3.size.Scale
 import coil3.request.crossfade
+import coil3.size.Scale
 import id.lena.wedding.utils.color.ColorAccent
 import id.lena.wedding.utils.color.ColorBorder
 import id.lena.wedding.utils.color.ColorCard
 import id.lena.wedding.utils.color.ColorPrimaryDark
 import id.lena.wedding.utils.color.ColorTextMuted
+import id.lena.wedding.utils.color.ColorSectionAlt
 import id.lena.wedding.utils.data.GalleryPhoto
 import id.lena.wedding.utils.data.galleryPhotos
 import id.lena.wedding.utils.icons.ArrowRightIcon
 
 
 @Composable
-fun GallerySection(onPhotoClick: (Int) -> Unit = {}) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth().background(ColorCard).padding(horizontal = 24.dp, vertical = 64.dp)) {
+fun GallerySection(
+    onPhotoClick: (Int) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth().background(ColorCard).padding(horizontal = 24.dp, vertical = 64.dp)) {
         val isMobile = maxWidth < 760.dp
 
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
@@ -87,14 +92,16 @@ fun GallerySection(onPhotoClick: (Int) -> Unit = {}) {
                     ) {
                         galleryPhotos.forEachIndexed { idx, photo ->
                             if (idx % columns == col) {
-                                val smallUrl = if (isMobile) photo.url.replace("500/500", "360/360") else photo.url
+                                val smallUrl = if (isMobile) photo.url.replace("500/500", "320/320") else photo.url
                                 val ctx = LocalPlatformContext.current
+                                val onClick = remember(idx) { { onPhotoClick(idx) } }
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile)).clip(RoundedCornerShape(16.dp)).clickable { onPhotoClick(idx) }
+                                    modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile)).clip(RoundedCornerShape(16.dp)).clickable { onClick() }
                                 ) {
                                     AsyncImage(
-                                        model = ImageRequest.Builder(ctx).data(smallUrl).size(360).scale(Scale.FILL).crossfade(false).build(),
-                                        contentDescription = photo.caption, contentScale = ContentScale.Crop,
+                                        model = ImageRequest.Builder(ctx).data(smallUrl).size(320).scale(Scale.FILL).crossfade(false).build(),
+                                        contentDescription = photo.caption, contentScale = ContentScale.Crop, filterQuality = androidx.compose.ui.graphics.FilterQuality.Low,
+                                        placeholder = androidx.compose.ui.graphics.painter.ColorPainter(ColorSectionAlt),
                                         modifier = Modifier.fillMaxWidth().height(photo.aspectHeight(isMobile))
                                     )
                                     Box(modifier = Modifier.fillMaxWidth().height(70.dp).align(Alignment.BottomCenter).background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC2D1E3A)))))
